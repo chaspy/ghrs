@@ -13,7 +13,8 @@ get_issues() {
   fi
   for REPO in $REPOS; do
     curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}" | \
-    jq -cr '.[] | {title: .title , url: .html_url , assignee: '$asn'}' | \
+    jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn}}" | \
+    jq ". |select( .assignee | inside(\"${MEMBERS}\"))" | \
     jq -r '"[\(.title)](\(.url)) by @\(.assignee)"'
   done
 }
