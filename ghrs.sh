@@ -25,7 +25,7 @@ get_issues() {
   fi
   for REPO in $REPOS; do
     curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}" | \
-    jq -cr '.[] | {title: .title , url: .url , assignee: '$asn'}' > $REPO-$1.json
+    jq -cr '.[] | {title: .title , url: .html_url , assignee: '$asn'}' > $REPO-$1.json
     json2md $REPO $1
   done
 }
