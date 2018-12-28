@@ -7,7 +7,9 @@ json2md() {
     title=$(echo $LINE | jq -r .title)
     url=$(echo $LINE | jq -r .url)
     assignee=$(echo $LINE | jq -r .assignee)
-    echo "[$title]($url) by @$assignee" >> $RESULT
+    if [[ $MEMBERS =~ $assignee ]]; then
+      echo "[$title]($url) by @$assignee" >> $RESULT
+    fi
   done < $1-$2.json
 }
 
