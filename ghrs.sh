@@ -1,18 +1,6 @@
 #!/bin/bash
 # This script is ghrs implemented by bash for testing
 
-json2md() {
-  echo -e "\n### $1" >> $RESULT
-  while read LINE; do
-    title=$(echo $LINE | jq -r .title)
-    url=$(echo $LINE | jq -r .url)
-    assignee=$(echo $LINE | jq -r .assignee)
-    if [[ $MEMBERS =~ $assignee ]]; then
-      echo "[$title]($url) by @$assignee" >> $RESULT
-    fi
-  done < $1-$2.json
-}
-
 get_issues() {
   if [[ $1 == issues ]]; then
     optional_query="&labels=${LABEL}"
@@ -25,8 +13,8 @@ get_issues() {
   fi
   for REPO in $REPOS; do
     curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}" | \
-    jq -cr '.[] | {title: .title , url: .html_url , assignee: '$asn'}' > $REPO-$1.json
-    json2md $REPO $1
+    jq -cr '.[] | {title: .title , url: .html_url , assignee: '$asn'}' | \
+    jq -r '"[\(.title)](\(.url)) by @\(.assignee)"'
   done
 }
 
