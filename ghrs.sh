@@ -12,10 +12,11 @@ get_issues() {
     REPOS=$PR_REPOS
   fi
   for REPO in $REPOS; do
+    echo -e "\n### ${REPO}" >> $RESULT
     curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}" | \
     jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn}}" | \
     jq ". |select( .assignee | inside(\"${MEMBERS}\"))" | \
-    jq -r '"[\(.title)](\(.url)) by @\(.assignee)"'
+    jq -r '"- [\(.title)](\(.url)) by @\(.assignee)"' >> $RESULT
   done
 }
 
