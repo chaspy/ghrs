@@ -7,7 +7,7 @@ get_issues() {
     asn='.assignee.login'
     REPOS=$ISSUE_REPOS
   else
-    optional_query=""
+    optional_query="&state=closed"
     asn='.user.login'
     REPOS=$PR_REPOS
   fi
