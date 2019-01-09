@@ -29,6 +29,8 @@ main() {
     get_issues $type
   done
 
+  ## TODO remove release PR
+
   rm -f *.json
 }
 
