@@ -8,10 +8,22 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var (
+	github_token = os.Getenv("GITHUB_TOKEN")
+	label        = os.Getenv("LABEL")
+	owner        = os.Getenv("OWNER")
+	issue_repos  = os.Getenv("ISSUE_REPOS")
+	pr_repos     = os.Getenv("PR_REPOS")
+	since        = os.Getenv("SINCE")
+	members      = os.Getenv("MEMBERS")
+	result       = os.Getenv("RESULT")
+	except_word  = os.Getenv("EXCEPT_WORD")
+)
+
 func main() {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+		&oauth2.Token{AccessToken: github_token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
