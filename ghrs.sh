@@ -9,7 +9,11 @@ call_api_and_write_result() {
   jq ". |select(.updated_at > \"${SINCE}\")" | \
   jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"')
 
-  echo -e "${query_result}" >> $RESULT
+  if [ -n "$query_result" ]; then
+    echo -e "${query_result}" >> $RESULT
+  else
+    return 1
+  fi
 }
 
 get_issues() {
@@ -35,6 +39,9 @@ get_issues() {
     else
       for p in `seq 1 $last_page`; do
         call_api_and_write_result "${uri}${query}&page=$p"
+        if [[ $? -ne 0 ]]; then
+          break
+        fi
       done
     fi
   done
