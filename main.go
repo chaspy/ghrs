@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
+	"os"
 )
 
 var (
