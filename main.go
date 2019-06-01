@@ -30,7 +30,7 @@ func main() {
 	client := github.NewClient(tc)
 
 	// list all repositories for the authenticated user
-	repos, _, err := client.Repositories.List(ctx, "", nil)
+	repos, _, err := client.Repositories.List(ctx, owner, nil)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
