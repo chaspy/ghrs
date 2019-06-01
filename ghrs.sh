@@ -30,7 +30,7 @@ get_issues() {
     echo -e "\n### ${REPO}" >> $RESULT
 
     # Get last page
-    uri="https://api.github.com/repos/quipper/${REPO}/${1}"
+    uri="https://api.github.com/repos/${OWNER}/${REPO}/${1}"
     query="?since=${SINCE}${optional_query}&per_page=100"
     last_page=$(curl --silent --head -H "Authorization: token $GITHUB_TOKEN" "${uri}${query}" | grep '^Link:' | sed -e 's/^Link:.*page=//g' -e 's/>.*$//g')
 
