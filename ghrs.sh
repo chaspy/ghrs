@@ -15,7 +15,7 @@ get_issues() {
     echo -e "\n### ${REPO}" >> $RESULT
     curl -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}" | \
     jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
-    jq ". |select( .assignee | inside(\"${MEMBERS}\"))" | \
+    jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
     jq ". |select(.updated_at > \"${SINCE}\")" | \
     jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"' >> $RESULT
   done
