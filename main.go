@@ -8,17 +8,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-func FetchOrganizations(username string) ([]*github.Organization, error) {
-	client := github.NewClient(nil)
-	orgs, _, err := client.Organizations.List(context.Background(), username, nil)
-	return orgs, err
-}
-
 func main() {
-	var username string
-	fmt.Print("Enter GitHub username: ")
-	fmt.Scanf("%s", &username)
-
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
