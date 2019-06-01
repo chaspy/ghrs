@@ -13,11 +13,25 @@ get_issues() {
   fi
   for REPO in $REPOS; do
     echo -e "\n### ${REPO}" >> $RESULT
-    curl --silent -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}&per_page=100" | \
-    jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
-    jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
-    jq ". |select(.updated_at > \"${SINCE}\")" | \
-    jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"' >> $RESULT
+
+    # Get last page
+    last_page=$(curl --silent --head -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}&per_page=100" | grep '^Link:' | sed -e 's/^Link:.*page=//g' -e 's/>.*$//g')
+
+    if [ -z "$last_page" ]; then
+      curl --silent -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}&per_page=100" | \
+      jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
+      jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
+      jq ". |select(.updated_at > \"${SINCE}\")" | \
+      jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"' >> $RESULT
+    else
+      for p in `seq 1 $last_page`; do
+        curl --silent -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/quipper/${REPO}/${1}?since=${SINCE}${optional_query}&per_page=100&page=$p" | \
+        jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
+        jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
+        jq ". |select(.updated_at > \"${SINCE}\")" | \
+        jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"' >> $RESULT
+      done
+    fi
   done
 }
 
