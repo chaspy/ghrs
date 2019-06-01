@@ -5,6 +5,7 @@ call_api_and_write_result() {
   query_result=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" "${1}" | \
   jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
   jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
+  jq ". |select(.title | contains(\""${EXCEPT_WORD}"\") | not)" | \
   jq ". |select(.updated_at > \"${SINCE}\")" | \
   jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"')
 
@@ -47,8 +48,6 @@ main() {
     echo -e "\n## ${type}" >> $RESULT
     get_issues $type
   done
-
-  ## TODO remove release PR
 
   rm -f *.json
 }
