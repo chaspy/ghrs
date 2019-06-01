@@ -1,6 +1,16 @@
 #!/bin/bash
 # This script is ghrs implemented by bash for testing
 
+call_api_and_write_result() {
+  query_result=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" "${1}" | \
+  jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
+  jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
+  jq ". |select(.updated_at > \"${SINCE}\")" | \
+  jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"')
+
+  echo -e "${query_result}" >> $RESULT
+}
+
 get_issues() {
   if [[ $1 == issues ]]; then
     optional_query="&labels=${LABEL}"
@@ -20,18 +30,10 @@ get_issues() {
     last_page=$(curl --silent --head -H "Authorization: token $GITHUB_TOKEN" "${uri}${query}" | grep '^Link:' | sed -e 's/^Link:.*page=//g' -e 's/>.*$//g')
 
     if [ -z "$last_page" ]; then
-      curl --silent -H "Authorization: token $GITHUB_TOKEN" "${uri}${query}" | \
-      jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
-      jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
-      jq ". |select(.updated_at > \"${SINCE}\")" | \
-      jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"' >> $RESULT
+      call_api_and_write_result "${uri}${query}"
     else
       for p in `seq 1 $last_page`; do
-        curl --silent -H "Authorization: token $GITHUB_TOKEN" "${uri}${query}&page=$p" | \
-        jq -cr ".[] | {title: .title , url: .html_url , assignee: ${asn} , updated_at: .updated_at}" | \
-        jq ". |select( .assignee !=null) |select( .assignee | inside(\"${MEMBERS}\"))" | \
-        jq ". |select(.updated_at > \"${SINCE}\")" | \
-        jq -r '"- [\(.title)](\(.url)) by @\(.assignee) at \(.updated_at)"' >> $RESULT
+        call_api_and_write_result "${uri}${query}&page=$p"
       done
     fi
   done
