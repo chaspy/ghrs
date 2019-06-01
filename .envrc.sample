@@ -1,1 +1,9 @@
 export GITHUB_TOKEN=
+export LABEL=
+export OWNER="chaspy"
+export ISSUE_REPOS='repo1 repo2'
+export PR_REPOS='repo1 repo2'
+export SINCE=2018-12-31T00:00:00Z
+export MEMBERS="name1 name2"
+export RESULT=result.md
+export EXCEPT_WORD="''"

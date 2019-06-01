@@ -5,10 +5,8 @@ Retrospective your team's github activity
 
 ```
 $ cp .envrc.sample .envrc
-$ vi .envrc # Set personal token
+$ vi .envrc
 $ # source .envrc
-$ cp config.sh.sample config.sh
-$ vi config.sh # edit for your environment
 ```
 
 ## Run

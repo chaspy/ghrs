@@ -48,7 +48,6 @@ get_issues() {
 }
 
 main() {
-  . config.sh
   echo "# Retrospective our activities since $SINCE" > $RESULT
 
   for type in issues pulls; do

@@ -1,8 +1,0 @@
-LABEL=
-OWNER="chaspy"
-ISSUE_REPOS='repo1 repo2'
-PR_REPOS='repo1 repo2'
-SINCE=2018-12-31T00:00:00Z
-MEMBERS="name1 name2"
-RESULT=result.md
-EXCEPT_WORD="''"
