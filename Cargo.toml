@@ -1,7 +1,0 @@
-[package]
-name = "ghrs"
-version = "0.1.0"
-authors = ["kondo takeshi <chaspy@users.noreply.github.com>"]
-
-[dependencies]
-reqwest = "*"
