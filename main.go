@@ -33,13 +33,15 @@ func main() {
 	issue_repos_slice := strings.Split(issue_repos, " ")
 	for _, repo := range issue_repos_slice {
 		fmt.Println(repo)
-		r, _, err := client.Repositories.Get(ctx, owner, repo)
+		issues, _, err := client.Issues.ListByRepo(ctx, owner, repo, nil)
 
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
 
-		fmt.Printf("%v\n", r.GetIssuesURL())
+		for i, issue := range issues {
+			fmt.Printf("%v, %v, %v, %v, %v\n", i, *issue.Title, *issue.URL, issue.Labels, issue.Assignees, *issue.UpdatedAt)
+		}
 	}
 }
